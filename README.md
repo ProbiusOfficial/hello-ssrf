@@ -12,8 +12,8 @@ gopher_master - gopher协议完成HTTP相关请求
 hostbypass - 简单绕过host限制  
 whynotdomain - 域名绕过限制  
     
-ohmyredis - 打redis
-ohmysql - 打mysql未授权
+ohmyredis - 打redis  
+ohmysql - 打mysql未授权  
 
 ## Usage
 
