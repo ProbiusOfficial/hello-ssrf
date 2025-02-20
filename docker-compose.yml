@@ -1,32 +1,32 @@
 version: '3.8'
 
 services:
-  gophers_mirror:
+  web3_gophers_mirror:
     build:
       context: ./gopher_mirror
     image: hellossrf:gophers_mirror
 
-  hello-world:
+  web1_hello-world:
     build:
       context: ./hello-world
     image: hellossrf:hello-world
 
-  hostbypass:
+  web5_hostbypass:
     build:
       context: ./hostbypass
     image: hellossrf:hostbypass
 
-  openwhat:
+  web2_openwhat:
     build:
       context: ./openwhat
     image: hellossrf:openwhat
 
-  whynotdomain:
+  web6_whynotdomain:
     build:
       context: ./whynotdomain
     image: hellossrf:whynotdomain
 
-  gopher_master:
+  web4_gopher_master:
     build:
       context: ./gopher_master
     image: hellossrf:gopher_master
