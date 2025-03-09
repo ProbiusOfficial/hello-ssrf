@@ -37,11 +37,11 @@ if not insert_flag:
 
 # 定义每个端口的自定义响应消息
 port_responses = {
-    81: "Port 81 is open:",
-    8082: "Port 8082 is open:",
     23: "Port 23 is open:",
+    81: "Port 81 is open:",
     3309: "Port 3309 is open:",
     6380: "Port 6380 is open:",
+    8082: "Port 8082 is open:",
     9001: "Port 9001 is open:"
 }
 

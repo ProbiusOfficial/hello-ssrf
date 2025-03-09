@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title> SSRF 靶场 - Hello-CTF </title>
+    <link href="static/img/favicon.png" rel="icon" type="image/png">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/xterm.min.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/fullscreen.min.css" rel="stylesheet" type="text/css"/>
+    <style>
+      :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --background-color: #ffffff;
+            --text-color: #2c3e50;
+            --code-background: #f4f4f4;}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .challenge-title {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .challenge-description {
+            background-color: var(--code-background);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-top: 1rem;
+        }
+
+        .challenge-input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;}
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .source-code {
+            background-color: var(--code-background);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .footer {
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--secondary-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+      .row {
+        margin-top: 5px;
+        margin-bottom: 3px;
+      }
+
+      .container {
+        margin-top: 5px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="challenge-title">Hello SSRF | Hello-CTF系列靶场</h1>
+        <div class="challenge-description">
+            <h2>Level 7 | OhMySQL </h2>
+            <p>得益于gopher可以传递TCP数据流的强大功能，我们可以通过模拟数据库协议的TCP数据来攻击未加密的MySQL数据库。</p>
+            <p>实验环境为ssh终端环境，环境配备 curl tcpdump 等必要工具，登入后请使用sudo -i切换为root用户，密码123456</p>
+            <p>在该实验环境中尝试区分 mysql -uroot 与 mysql -h127.0.0.1 -uroot 的区别，可以使用 tcpdump -i lo port 3306 -w 的方式抓取本地流量包研究。</p>
+            <p>如需下载对应流量包，可在此处输入路径下载，也可以在URL后添加参数：/download?file=path2file 如果切换用户后没有跳转目录，您的流量包应该在/root/下</p>
+            <div id="downloadBox" style="bottom: 20px; right: 20px; padding: 15px; border-radius: 8px;">
+              <div class="form-group">
+                <input type="text" class="form-control" id="filePath" placeholder="Enter file path">
+              </div>
+              <button onclick="downloadFile()" class="btn btn-primary mt-2">Download</button>
+            </div>
+            <p>当你准备就绪时，点击下方的 Connect 按钮接入终端。</p>
+      <form id="connect" action="" type="post" enctype="multipart/form-data">
+        <div class="row" style="display:none"></div>
+          <div class="col">
+        <input class="form-control" type="hidden" name="hostname" value="127.0.0.1">
+          </div>
+          <div class="col">
+        <input class="form-control" type="hidden" name="port" value="22">
+          </div>
+        </div>
+        <div class="row" style="display:none">
+          <div class="col">
+        <input class="form-control" type="hidden" name="username" value="helloctf">
+          </div>
+        </div>
+        <div class="row" style="display:none">
+          <div class="col">
+        <input class="form-control" type="hidden" name="password" value="123456">
+          </div>
+        </div>
+        {% module xsrf_form_html() %}
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Connect</button>
+        </div>
+      </div>
+      </form>
+
+    </div>
+
+    <div class="container">
+      <div id="status" style="color: red;"></div>
+      <div id="terminal"></div>
+    </div>
+    
+
+    <script>
+    function downloadFile() {
+      const path = document.getElementById('filePath').value;
+      if (path) {
+        window.location.href = `/download?file=${encodeURIComponent(path)}`;
+      }
+    }
+    </script>
+    
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/js/popper.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/xterm.min.js"></script>
+    <script src="static/js/fullscreen.min.js"></script>
+    <script src="static/js/main.js"></script>
+  </body>
+</html>
