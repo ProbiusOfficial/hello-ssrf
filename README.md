@@ -1,25 +1,42 @@
 # hello-ssrf
-【Hello-CTF labs】靶场系列
+【Hello-CTF labs】靶场系列 - [ssrf-labs](https://github.com/ProbiusOfficial/ssrf-labs)  的前置靶场，介绍基本的协议，攻击场景以及常见绕过方式。
 
-算是 [ssrf-labs](https://github.com/ProbiusOfficial/ssrf-labs)  的前置靶场，介绍基本的协议，绕过方式以及攻击场景。
+**已更新内容：**
 
-... 暂时先更新这么多，看我后续课程安排更新（
+| 推荐序号      | 关卡名                         | 内容                           |
+| ------------- | :----------------------------- | :----------------------------- |
+| Level 1       | hello-world                    | 无过滤SSRF，主要了解file协议   |
+| Level 2       | openwhat                       | SSRF中的端口探测               |
+| Level 3       | **【实验环境】***gopher_mirror | gopher协议特性                 |
+| **Level 4***  | gopher_master                  | gopher协议完成HTTP相关请求     |
+| Level 5       | 【实验环境】ohmysql            | TCP流量视角下的mysql未授权攻击 |
+| **Level b1*** | hostbypass                     | 简单绕过host限制               |
+| Level b2      | whynotdomain                   | 域名绕过限制                   |
 
-hello-world - 第一关 无过滤，主要了解file协议 
+**注：**
 
-openwhat - 端口探测 
+**【实验环境】***：该标签环境无flag，或不以flag为目标，实验环境主要帮助探索和理解对应攻击手法的过程或者原理。
 
-gopher_mirror - gopher协议特性 
+**Level 4***：对于ssrf涉及到的多个攻击场景，本质上均为http请求，这里不再细分场景，如：基于HTTP请求的 代码注入，SQL注入，命令执行，XML注入，[Tomcat PUT 方法任意写文件漏洞（CVE-2017-12615）](https://github.com/vulhub/vulhub/blob/master/tomcat/CVE-2017-12615/README.zh-cn.md)。
 
-gopher_master - gopher协议完成HTTP相关请求 
+当你完成该关卡后，可尝试 [ssrf-labs](https://github.com/ProbiusOfficial/ssrf-labs)  中的对应关卡。
 
-hostbypass - 简单绕过host限制 
+**Level b1***：带有**b**标号说明该关卡主要围绕bypass - 即**ssrf中的常见绕过方式**，主要与攻击场景做区分。
 
-whynotdomain - 域名绕过限制 
 
-ohmyredis - 打redis 
 
-ohmysql - 打mysql未授权  
+**计划中的内容：**
+
+| 推荐序号 | 关卡名      | 内容                                                         |
+| -------- | :---------- | :----------------------------------------------------------- |
+| Level 6  | getmysql    | 基于mysql未授权的mysql提权                                   |
+| Level 7  | ohmyRedis   | 使用dict协议攻击Redis 未授权                                 |
+| Level 8  | evalFastcgi | idea：[【**phithon**- Fastcgi协议分析 && PHP-FPM未授权访问漏洞 && Exp编写】](https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html) |
+|          |             |                                                              |
+
+【饼】其他计划内容：
+
+基于SRC中SSRF场景的一些复刻 - 感谢[小火炬]()师傅提供的相关报告。
 
 ## Usage
 
@@ -33,7 +50,124 @@ docker-compose build
 docker run --rm -d -p 80:80/tcp hellossrf:hostbypass
 ```
 
+## 一些踩坑
+
+市面上很多ssrf相关漏洞都有了一些年限，在复现过程中难免会遇到因为各种各样的更新迭代导致原环境崩坏或者在新环境中有些漏洞无法复现的问题，这里是笔者在构建此靶场和另一个靶场ssrf-lab遇到的一些坑，仅供参考：
+
+### 关于 【实验环境】ohmysql
+
+对于原生镜像 mysql:5.6 ，由于其底层为 Debian 9 Stretch，而该版本已经不受支持
+
+> 每个 Debian 稳定版本都有两年的官方支持期限，然后进入由 Debian LTS Team 支持的至少三年的[长期支持（LTS）](https://www.debian.org/lts/)期。在这五年中，用户依旧可以使用官方 debian 源、debian-security 源及它们的镜像。
+>
+> 在 LTS 结束后，对应发行版的软件源会被从 Debian 主源中删除，移动到 [archive.debian.org](https://archive.debian.org/)，不再获得任何更新，对应的 APT 签名公钥也会过期。Freexian 公司为 Debian 提供付费的[扩展 LTS 支持](https://www.freexian.com/lts/extended/)服务，主要提供安全更新，也有少量功能更新，通常支持期限可至对应版本发布后十年。这些 ELTS 软件源是可以免费使用的。
+
+所有的相关包都被收录在Debian的archive中，导致如需在该镜像中安装部分实验环境会报错源失效：
+
+```
+root@hello-ctf:/# apt update
+Ign:1 http://security.debian.org/debian-security  stretch/updates InRelease
+Ign:2 http://deb.debian.org/debian  stretch InRelease
+Get:3 http://repo.mysql.com/apt/debian  stretch InRelease [21.6 kB]
+Err:4 http://security.debian.org/debian-security  stretch/updates Release        
+  404  Not Found [IP: 151.101.2.132 80]
+  ......
+```
+
+需手动修改为 http://archive.debian.org/debian 而国内部分源对此没有加速，导致部分全局加速配置无效。
+
+笔者基于 https://help.mirrors.cernet.edu.cn/debian-elts/ 做了重新配置。
+
+### 关于 Crul 版本
+
+当你在稍新一点的容器中（如果他预装了curl）复现类似攻击Mysql未授权的本地curl exp时，你可能遇到以下报错：
+
+```bash
+root@hello-ctf:/# curl -v 'gopher:...%00%00%...'
+...//省略部分内容
+curl: (3) URL using bad/illegal format or missing URL
+<该报错源于笔者环境，使用curl --version输出如下>
+<curl 7.88.1 (x86_64-pc-linux-gnu) libcurl/7.88.1 OpenSSL/3.0.15 zlib/1.2.13 brotli/1.0.9 zstd/1.5.4 libidn2/2.3.3 libpsl/0.21.2 (+libidn2/2.3.3) libssh2/1.10.0 nghttp2/1.52.0 librtmp/2.3 OpenLDAP/2.5.13
+Release-Date: 2023-02-20, security patched: 7.88.1-10+deb12u8
+Protocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp
+Features: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM NTLM_WB PSL SPNEGO SSL threadsafe TLS-SRP UnixSockets zstd>
+```
+
+这是由于从**7.81.0 版本（2021-10-13）**后引入了更严格的 URL 解析规则，禁止在 URL 路径中包含控制字符（如 `%00`）。
+
+此版本明确将空字符视为非法字符。
+
+如需使用宽松版本，推荐使用 【实验环境】ohmysql 中的curl命令，该命令版本信息如下”
+
+```
+curl 7.52.1 (x86_64-pc-linux-gnu) libcurl/7.52.1 OpenSSL/1.0.2u zlib/1.2.8 libidn2/0.16 libpsl/0.17.0 (+libidn2/0.16) libssh2/1.7.0 nghttp2/1.18.1 librtmp/2.3
+Protocols: dict file ftp ftps gopher http https imap imaps ldap ldaps pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp 
+```
+
+## 一些推荐
+
+### 工具
+
+[【Esonhugh/Gopherus3】：https://github.com/Esonhugh/Gopherus3](https://github.com/Esonhugh/Gopherus3) -SSRF基于Gopher的利用工具，通过自动化地生成Gopher协议Payload，该版本为原版的Python3版本，由[Esonhugh](https://github.com/Esonhugh)师傅发布。
+
+### 文章
+
+[【2016-05-31_长亭科技 - 利用 Gopher 协议拓展攻击面】](https://blog.chaitin.cn/gopher-attack-surfaces/)
+
+[【2023-12-12 Web安全学习笔记 - 4. 常见漏洞攻防 » 4.4. SSRF】](https://websec.readthedocs.io/zh/latest/vuln/ssrf.html)
+
+[【2021-01-26 SSRF安全指北】](https://security.tencent.com/index.php/blog/msg/179)
+
+[【2021-01-14 Freebuf - CTF SSRF 漏洞从0到1】](https://www.freebuf.com/articles/web/260806.html) 
+
+### Github靶场
+
+[【ssrf-labs】：https://github.com/ProbiusOfficial/ssrf-labs](https://github.com/ProbiusOfficial/ssrf-labs)：ssrf综合靶场
+
+>基于国光师傅 [ssrf-vuls](https://github.com/sqlsec/ssrf-vuls) 修改
+>
+>- 为所有靶场都做了单独容器，方便调试。
+>
+>- 添加以源码方式部署的 docker-compose.yml 。
+>- 基于 [【**phithon**- Fastcgi协议分析 && PHP-FPM未授权访问漏洞 && Exp编写】](https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html) 添加了FastCGI场景
+
+[【ByteCTF2021-Final-SEO】：https://github.com/sqlsec/ByteCTF2021-Final-SEO](https://github.com/sqlsec/ByteCTF2021-Final-SEO)：SSRF下Mysql未授权+UDF提权
+
+> - 前端功能场景尽量模拟了真实的 SSRF 漏洞情况
+> - 通过 JS 去请求 API 接口，比较符合目前主流的开发场景
+> - 多个没有 SSRF 漏洞的干扰接口，需要选手耐心去过一些这些接口
+> - 配合文件下载漏洞可以快速定位内网服务器的当前网段
+> - 考察选手 SSRF 在内网中的实际信息收集，需要选手自己去找到内网的 MySQL 资产
+> - 考察选手 MySQL 的攻击思路，这里只要考擦使用 SSRF 进行内网 MySQL 的 UDF 提权
+
+### SSRF 其他学习资源：
+
+**CTFShow-SSRF系列题目 web351-web360** - 推荐WriteUp：https://tari.moe/2021/ctfshow-ssrf.html
+
+> web351 - 无过滤
+>
+> web352 - 协议必须是 http/https ，过滤了 localhost 和 127.0.0
+>
+> web353 - 协议必须是 http/https ，过滤了localhost、127.0. 考察绕过方法
+>
+> web354 - 域名绕过
+>
+> web355 - 域名长度限制-5
+>
+> web356 - 域名长度限制-3
+>
+> web357 - IP过滤
+>
+> web358 -  白名单正则
+>
+> web359 - Mysql未授权
+>
+> web360 - Redis未授权
+
+**CTFhub-SSRF技能树**
+
 ## Writeup
+
 ### hello-world
 
 同题目所说，该关卡没有任何过滤，主要用于熟悉ssrf中用到的各种协议。
@@ -52,8 +186,6 @@ file:///proc/net/fib_trie # 显示当前网段路由信息
 作为一个CTF题目，该关卡要求你通过file协议(file://)来读取位于根目录的flag文件(/flag)。
 
 所以只需要在扫描框中输入 `file:///flag` 即可。
-
-![image-20250220150150251](./assets/image-20250220150150251.png)
 
 在 ssrf 中，除了file协议，我们还会讲到下面几个：
 
@@ -206,22 +338,12 @@ Connection: close
 >
 > 一些推荐的文章：
 >
-> [【2016-05-31_长亭科技 - 利用 Gopher 协议拓展攻击面】](https://blog.chaitin.cn/gopher-attack-surfaces/) - 早啊 真早啊（）
->
 > [【2018-01-10  Freebuf - 从一道CTF题目看Gopher攻击MySql】](https://www.freebuf.com/articles/web/159342.html) - mysql协议分析部分应该是文章的精髓了
 >
 > [【2018-01-23 Seebug - SSRF To RCE in MySQL】](https://paper.seebug.org/510/) - 在检索资料的时候，发现一堆人都从这抄的（（
->
-> [【2021-01-14 Freebuf - CTF SSRF 漏洞从0到1】](https://www.freebuf.com/articles/web/260806.html) - 一篇时间比较近 还比较全面的
 
 设计中 —— 由于时效性，该关卡最主要应该展示偏向过程一点的，如协议的展示分析，MySQL协议的TCP相关结构和传输过程。
 
 该关卡目前已经没太大实战价值，但希望各位能从中收获一些做题之外的东西。
 
 
-
-## 其他
-
-SSRF 其他学习资源：
-
-CTFShow系列题目 - 推荐WriteUp：https://tari.moe/2021/ctfshow-ssrf.html

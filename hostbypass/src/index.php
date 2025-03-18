@@ -104,7 +104,7 @@
     <div class="container">
         <h1 class="challenge-title">Hello SSRF | Hello-CTF系列靶场</h1>
         <div class="challenge-description">
-            <h2>Level 5 | hostbypass </h2>
+            <h2>Level b1 | hostbypass </h2>
             <p>0 | 0.0.0.0 | 127.1 | 0x7f.0.0.1 | 0177.0.0.1 |</p>
             <p>本关卡过滤127.0.0.1和localhost，Python将监听8181端口，你需要用get发送key=helloctf的参数来获取flag</p>
         </div>

@@ -104,7 +104,7 @@
     <div class="container">
         <h1 class="challenge-title">Hello SSRF | Hello-CTF系列靶场</h1>
         <div class="challenge-description">
-            <h2>Level 6 | whynotDomain? </h2>
+            <h2>Level b2 | whynotDomain? </h2>
             <p>试试看指向127.0.0.1的域名，比如我给你一个？local.hello-ctf.com </p>
             <p>本关卡过滤数字和localhost，Python将监听8181端口，你需要用get发送key=helloctf的参数来获取flag</p>
         </div>
