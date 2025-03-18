@@ -7,7 +7,7 @@
 | ------------- | :----------------------------- | :----------------------------- |
 | Level 1       | hello-world                    | 无过滤SSRF，主要了解file协议   |
 | Level 2       | openwhat                       | SSRF中的端口探测               |
-| Level 3       | **【实验环境】***gopher_mirror | gopher协议特性                 |
+| Level 3       | 【实验环境】* gopher_mirror | gopher协议特性                 |
 | **Level 4***  | gopher_master                  | gopher协议完成HTTP相关请求     |
 | Level 5       | 【实验环境】ohmysql            | TCP流量视角下的mysql未授权攻击 |
 | **Level b1*** | hostbypass                     | 简单绕过host限制               |
@@ -36,7 +36,7 @@
 
 【饼】其他计划内容：
 
-基于SRC中SSRF场景的一些复刻 - 感谢[小火炬]()师傅提供的相关报告。
+基于SRC中SSRF场景的一些复刻 - 感谢【小火炬\<Wechat:xiaohuoju123456\>】师傅提供的相关报告。
 
 ## Usage
 
