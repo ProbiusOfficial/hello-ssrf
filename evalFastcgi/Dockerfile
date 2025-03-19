@@ -1,5 +1,5 @@
 # 使用官方的 php:fpm 镜像作为基础镜像
-FROM php:8.2-fpm
+FROM php:7.2-fpm
 
 # 制作者信息
 LABEL auther_template="Hello-CTF"
