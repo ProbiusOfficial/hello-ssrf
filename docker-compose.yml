@@ -26,6 +26,8 @@ services:
     build:
       context: ./ohmysql
     image: hellossrf:ohmysql
+
+    
   webb1_hostbypass:
     build:
       context: ./hostbypass

@@ -3,15 +3,18 @@
 
 **已更新内容：**
 
-| 推荐序号      | 关卡名                         | 内容                           |
-| ------------- | :----------------------------- | :----------------------------- |
-| Level 1       | hello-world                    | 无过滤SSRF，主要了解file协议   |
-| Level 2       | openwhat                       | SSRF中的端口探测               |
-| Level 3       | **【实验环境】***gopher_mirror | gopher协议特性                 |
-| **Level 4***  | gopher_master                  | gopher协议完成HTTP相关请求     |
-| Level 5       | 【实验环境】ohmysql            | TCP流量视角下的mysql未授权攻击 |
-| **Level b1*** | hostbypass                     | 简单绕过host限制               |
-| Level b2      | whynotdomain                   | 域名绕过限制                   |
+| 推荐序号      | 关卡名                         | 内容                                                         |
+| ------------- | :----------------------------- | :----------------------------------------------------------- |
+| Level 1       | hello-world                    | 无过滤SSRF，主要了解file协议                                 |
+| Level 2       | openwhat                       | SSRF中的端口探测                                             |
+| Level 3       | **【实验环境】***gopher_mirror | gopher协议特性                                               |
+| **Level 4***  | gopher_master                  | gopher协议完成HTTP相关请求                                   |
+| Level 5       | 【实验环境】ohmysql            | TCP流量视角下的mysql未授权攻击                               |
+| Level 6       | getmysql                       | 基于mysql未授权的mysql提权                                   |
+| Level 7       | ohmyRedis                      | 使用dict协议攻击Redis 未授权                                 |
+| Level 8       | evalFastcgi                    | [【**phithon**- Fastcgi协议分析 && PHP-FPM未授权访问漏洞 && Exp编写】](https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html) |
+| **Level b1*** | hostbypass                     | 简单绕过host限制                                             |
+| Level b2      | whynotdomain                   | 域名绕过限制                                                 |
 
 **注：**
 
@@ -27,16 +30,16 @@
 
 **计划中的内容：**
 
-| 推荐序号 | 关卡名      | 内容                                                         |
-| -------- | :---------- | :----------------------------------------------------------- |
-| Level 6  | getmysql    | 基于mysql未授权的mysql提权                                   |
-| Level 7  | ohmyRedis   | 使用dict协议攻击Redis 未授权                                 |
-| Level 8  | evalFastcgi | idea：[【**phithon**- Fastcgi协议分析 && PHP-FPM未授权访问漏洞 && Exp编写】](https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html) |
-|          |             |                                                              |
+| 推荐序号 | 关卡名 | 内容 |
+| -------- | :----- | :--- |
+|          |        |      |
+| Level 9  | ftp？  |      |
+|          |        |      |
+|          |        |      |
 
 【饼】其他计划内容：
 
-基于SRC中SSRF场景的一些复刻 - 感谢[小火炬]()师傅提供的相关报告。
+基于SRC中SSRF场景的一些复刻 - 感谢【小火炬\<Wechat:xiaohuoju123456>】师傅提供的相关案例。
 
 ## Usage
 
@@ -103,6 +106,16 @@ Features: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerbe
 curl 7.52.1 (x86_64-pc-linux-gnu) libcurl/7.52.1 OpenSSL/1.0.2u zlib/1.2.8 libidn2/0.16 libpsl/0.17.0 (+libidn2/0.16) libssh2/1.7.0 nghttp2/1.18.1 librtmp/2.3
 Protocols: dict file ftp ftps gopher http https imap imaps ldap ldaps pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp 
 ```
+
+### 关于 PHP 版本
+
+在搭建单环境 - evalFastcgi 时，根据P牛的文章 [【2017-04-25 **phithon**- Fastcgi协议分析 && PHP-FPM未授权访问漏洞 && Exp编写】](https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html) 和 vulhub的环境，得知这和fpm的版本并无关系，本质上是开放9000端口后的一种针对性利用，本来是沿用W4rnIn9师傅的文章 [【2020-09-09 W4rnIn9-SSRF系列之攻击FastCGI】](https://joner11234.github.io/article/9897b513.html) 去构建的docker，但是发现没有太大必要使用Ubuntu的底层镜像，所以第一个版本直接使用 php:fpm 并且在里面 php -s 一个ssrf页面，此时php默认版本为PHP8.4，当输入对应Payload时，和之前高版本的curl一样回显了 **"URL using bad/illegal format or missing URL"** ，推测是高版本PHP中的cURL扩展导致。
+
+经过测试为在**PHP 7.3及以后**中的cURL也同样引入了更严格的 URL 解析规则，在中间版本cURL扩展会产生空回显，在**PHP8.2**之后的版本，cURL会回显"**URL using bad/illegal format or missing URL**"。
+
+也就是说在高版本的PHP中，部分SSRF的攻击方式会因此失效？-当然如果这里有其他服务暴露可以执行宽松URL解析，依旧能完成对fpm-Fastcgi协议的攻击。
+
+> *注，测试仅通过拉取不同php-x.x.x-fpm版本释放payload实现，并未对php源码进行本地调试，测试结果可能不严谨，仅供参考。
 
 ## 一些推荐
 
@@ -345,5 +358,4 @@ Connection: close
 设计中 —— 由于时效性，该关卡最主要应该展示偏向过程一点的，如协议的展示分析，MySQL协议的TCP相关结构和传输过程。
 
 该关卡目前已经没太大实战价值，但希望各位能从中收获一些做题之外的东西。
-
 

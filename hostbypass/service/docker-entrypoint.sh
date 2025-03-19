@@ -20,7 +20,7 @@ elif [ "$GZCTF_FLAG" ]; then
     export GZCTF_FLAG=no_FLAG
     GZCTF_FLAG=no_FLAG
 else
-    export INSERT_FLAG="helloctf{you_got_first_flag_21}"
+    export INSERT_FLAG="helloctf{you_got_the_flag}"
 fi
 
 php-fpm & nginx &
