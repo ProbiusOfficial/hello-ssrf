@@ -7,7 +7,7 @@
 | ------------- | :----------------------------- | :----------------------------------------------------------- |
 | Level 1       | hello-world                    | 无过滤SSRF，主要了解file协议                                 |
 | Level 2       | openwhat                       | SSRF中的端口探测                                             |
-| Level 3       | **【实验环境】***gopher_mirror | gopher协议特性                                               |
+| Level 3       | 【实验环境】*gopher_mirror | gopher协议特性                                               |
 | **Level 4***  | gopher_master                  | gopher协议完成HTTP相关请求                                   |
 | Level 5       | 【实验环境】ohmysql            | TCP流量视角下的mysql未授权攻击                               |
 | Level 6       | getmysql                       | 基于mysql未授权的mysql提权                                   |
@@ -96,7 +96,7 @@ Protocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mq
 Features: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM NTLM_WB PSL SPNEGO SSL threadsafe TLS-SRP UnixSockets zstd>
 ```
 
-这是由于从**7.81.0 版本（2021-10-13）**后引入了更严格的 URL 解析规则，禁止在 URL 路径中包含控制字符（如 `%00`）。
+这是由于从 7.81.0版本(2021-10-13) 后引入了更严格的 URL 解析规则，禁止在 URL 路径中包含控制字符（如 `%00`）。
 
 此版本明确将空字符视为非法字符。
 
