@@ -31,6 +31,9 @@ COPY ./data/db.sql /docker-entrypoint-initdb.d/
 COPY ./src/ /usr/local/bin/app
 RUN chmod +x /usr/local/bin/app/*.py
 
+# 更改权限防止python无法下载流量文件
+RUN chmod 777 /root/
+
 # Entrypoint
 COPY ./service/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
