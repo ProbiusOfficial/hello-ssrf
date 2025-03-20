@@ -3,18 +3,18 @@
 
 **已更新内容：**
 
-| 推荐序号      | 关卡名                         | 内容                                                         |
-| ------------- | :----------------------------- | :----------------------------------------------------------- |
-| Level 1       | hello-world                    | 无过滤SSRF，主要了解file协议                                 |
-| Level 2       | openwhat                       | SSRF中的端口探测                                             |
-| Level 3       | 【实验环境】*gopher_mirror | gopher协议特性                                               |
-| **Level 4***  | gopher_master                  | gopher协议完成HTTP相关请求                                   |
-| Level 5       | 【实验环境】ohmysql            | TCP流量视角下的mysql未授权攻击                               |
-| Level 6       | getmysql                       | 基于mysql未授权的mysql提权                                   |
-| Level 7       | ohmyRedis                      | 使用dict协议攻击Redis 未授权                                 |
-| Level 8       | evalFastcgi                    | [【**phithon**- Fastcgi协议分析 && PHP-FPM未授权访问漏洞 && Exp编写】](https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html) |
-| **Level b1*** | hostbypass                     | 简单绕过host限制                                             |
-| Level b2      | whynotdomain                   | 域名绕过限制                                                 |
+| 推荐序号      | 关卡名                         | 内容                                                         | 镜像名                                                   | 开放端口                                         |
+| ------------- | :----------------------------- | :----------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Level 1       | hello-world                    | 无过滤SSRF，主要了解file协议                                 | probius/hellossrf:hello-world | 80 |
+| Level 2       | openwhat                       | SSRF中的端口探测                                             | probius/hellossrf:openwhat | 80 |
+| Level 3       | 【实验环境】*gopher_mirror | gopher协议特性                                               | probius/hellossrf:gopher_mirror | 80 |
+| **Level 4***  | gopher_master                  | gopher协议完成HTTP相关请求                                   | probius/hellossrf:gopher_master | 80       |
+| Level 5       | 【实验环境】ohmysql            | TCP流量视角下的mysql未授权攻击                               | probius/hellossrf:ohmysql | 5050 |
+| Level 6       | getmysql                       | 基于mysql未授权的mysql提权                                   | probius/hellossrf:getmysql      | 80       |
+| Level 7       | ohmyRedis                      | 使用dict协议攻击Redis 未授权                                 | probius/hellossrf:ohmyredis     | 80       |
+| Level 8       | evalFastcgi                    | [【**phithon**- Fastcgi协议分析 && PHP-FPM未授权访问漏洞 && Exp编写】](https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html) | probius/hellossrf:evalfastcgi | 80 |
+| **Level b1*** | hostbypass                     | 简单绕过host限制                                             | probius/hellossrf:hostbypass | 80 |
+| Level b2      | whynotdomain                   | 域名绕过限制                                                 | probius/hellossrf:whynotdomain | 80 |
 
 **注：**
 
@@ -51,6 +51,12 @@ docker-compose build
 然后启动你想打的关卡（比如hostbypass）
 ```bash
 docker run --rm -d -p 80:80/tcp hellossrf:hostbypass
+```
+
+或者直接使用docker拉取对应镜像：
+
+```bash
+docker run --rm -d -p 80:80/tcp probius/hellossrf:whynotdomain
 ```
 
 ## 一些踩坑
