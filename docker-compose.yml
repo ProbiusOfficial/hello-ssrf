@@ -27,7 +27,21 @@ services:
       context: ./ohmysql
     image: hellossrf:ohmysql
 
-    
+  web6_getmysql:
+    build:
+      context: ./getmysql
+    image: hellossrf:getmysql
+
+  web7_ohmyRedis:
+    build:
+      context: ./ohmyRedis
+    image: hellossrf:ohmyredis
+
+  web8_evalFastcgi:
+    build:
+      context: ./evalFastcgi
+    image: hellossrf:evalFastcgi
+  
   webb1_hostbypass:
     build:
       context: ./hostbypass
