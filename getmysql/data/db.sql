@@ -38,7 +38,7 @@ CREATE TABLE `test` (
 -- Records of table
 -- ----------------------------
 BEGIN;
-INSERT INTO `test` VALUES (1, 'helloct{you_got_flag_29}');
+INSERT INTO `test` VALUES (1, 'helloct{you_got_flag}');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
