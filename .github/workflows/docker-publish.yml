@@ -23,25 +23,26 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      - name: Extract service info from docker-compose.yml
-        id: extract
+      - name: Install yq
         run: |
-          echo "services_json<<EOF" >> $GITHUB_ENV
-          yq eval '.services[] | {"context": .build.context, "image": .image}' docker-compose.yml -o=json | jq -c '.' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.25.1/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
       
       - name: Build and push images
         run: |
-          echo "${{ env.services_json }}" | while read -r service; do
-            context=$(echo $service | jq -r '.context')
-            image_name=$(echo $service | jq -r '.image')
+          # 直接从docker-compose.yml提取服务并逐个构建
+          for service in $(yq e '.services | keys | .[]' docker-compose.yml); do
+            context=$(yq e ".services.$service.build.context" docker-compose.yml)
+            image=$(yq e ".services.$service.image" docker-compose.yml)
             
-            # 提取镜像标签
-            tag=$(echo $image_name | cut -d':' -f2)
+            # 提取标签
+            tag=$(echo "$image" | cut -d':' -f2)
             
-            echo "Building and pushing image from context: $context with tag: $tag"
+            echo "Building service: $service"
+            echo "Context: $context"
+            echo "Tag: $tag"
             
-            # 使用 docker buildx 构建并推送
+            # 构建并推送
             docker buildx build \
               --platform linux/amd64 \
               --push \
