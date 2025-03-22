@@ -43,6 +43,8 @@
 
 ## Usage
 
+### 本地部署
+
 ```bash
 git clone https://github.com/ProbiusOfficial/hello-ssrf.git
 cd hello-ssrf
@@ -58,6 +60,10 @@ docker run --rm -d -p 80:80/tcp hellossrf:hostbypass
 ```bash
 docker run --rm -d -p 80:80/tcp probius/hellossrf:whynotdomain
 ```
+### 合作平台
+题目已上线 [【青少年CTF平台】](https://www.qsnctf.com/) 可选择分类中的 **训练/靶场** 或直接搜索 hello-ssrf：
+
+![QQ_1742632757643](https://github.com/user-attachments/assets/8989c503-61c6-4891-bfb0-56db1b16760c)
 
 ## 一些踩坑
 
