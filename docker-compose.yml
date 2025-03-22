@@ -15,7 +15,7 @@ services:
   web3_gophers_mirror:
     build:
       context: ./gopher_mirror
-    image: hellossrf:gophers_mirror
+    image: hellossrf:gopher_mirror
 
   web4_gopher_master:
     build:
@@ -40,7 +40,7 @@ services:
   web8_evalFastcgi:
     build:
       context: ./evalFastcgi
-    image: hellossrf:evalFastcgi
+    image: hellossrf:evalfastcgi
   
   webb1_hostbypass:
     build:
